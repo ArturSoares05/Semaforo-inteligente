@@ -1,115 +1,91 @@
+# 🚦 Semáforo Inteligente para Pedestres com Arduino
 
-int dataPin = 13;
-int clockPin = 11;
-int latchPin = 12;
-int pedGreen = 4;
-int pedRed = 10;
-int Buzzer = 9;
-int pedButton = 8;
+## 📌 Descrição
 
-int carGreen = 7;
-int carYellow = 6;
-int carRed = 5;
+Este projeto consiste no desenvolvimento de um protótipo de **semáforo inteligente para pedestres**, utilizando um Arduino como microcontrolador principal. O sistema simula o funcionamento de um cruzamento urbano, permitindo que o pedestre solicite a travessia por meio de um botão.
 
-unsigned long changeTime;
+Diferente de um semáforo básico, o projeto incorpora recursos adicionais que melhoram a comunicação com o usuário, como **contagem visual de tempo por meio de uma barra de LEDs** e **sinalização sonora utilizando um buzzer**, tornando o sistema mais intuitivo e acessível.
 
-void setup()
-{
-  pinMode(dataPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(latchPin, OUTPUT);
+O sistema também integra o controle do **semafóro de veículos**, garantindo que a mudança de estado ocorra de forma segura e organizada.
 
-  pinMode(pedRed, OUTPUT);
-  pinMode(Buzzer, OUTPUT);
-  pinMode(pedButton, INPUT);
+---
 
-  pinMode(carGreen, OUTPUT);
-  pinMode(carYellow, OUTPUT);
-  pinMode(carRed, OUTPUT);
+## ⚙️ Componentes Utilizados
 
-  digitalWrite(carGreen, HIGH);
-  digitalWrite(pedRed, HIGH);
-}
+* Arduino (Uno ou compatível)
+* LEDs para sinalização de veículos
+* LEDs para sinalização de pedestres
+* Barra de **10 LEDs** para indicação de tempo de travessia
+* 2 registradores de deslocamento (74HC595)
+* Buzzer
+* Botão para solicitação de travessia
+* Resistores
+* Protoboard
+* Jumpers
 
-void loop()
-{
-  int state = digitalRead(pedButton);
+---
 
-  if (state == HIGH && (millis() - changeTime) > 8000) {
-    ChangeLights();
-  }
-}
+## 🧠 Funcionamento do Sistema
 
-void enviarLeds(uint16_t valor)
-{
-  digitalWrite(latchPin, LOW);
+O funcionamento do sistema ocorre da seguinte forma:
 
-  shiftOut(dataPin, clockPin, MSBFIRST, highByte(valor));
-  shiftOut(dataPin, clockPin, MSBFIRST, lowByte(valor));
+1. O semáforo inicia com **veículos em verde** e **pedestres em vermelho**.
+2. Quando o pedestre pressiona o botão de travessia, o sistema aguarda um tempo mínimo de segurança.
+3. O semáforo de veículos passa pela sequência:
 
-  digitalWrite(latchPin, HIGH);
-}
+   * Verde → Amarelo → Vermelho.
+4. Após a parada dos veículos, o **sinal verde para pedestres é liberado**.
+5. Durante a travessia, uma **barra de 10 LEDs** indica visualmente o tempo restante, apagando gradualmente conforme o tempo passa.
+6. Um **buzzer emite sinais sonoros**, indicando o início da travessia e alertando quando o tempo está terminando.
+7. Ao final do tempo, o sistema retorna ao estado inicial, liberando novamente o tráfego de veículos.
 
-void ChangeLights()
-{
-  
-  digitalWrite(carGreen, LOW);
-  digitalWrite(carYellow, HIGH);
-  delay(3000);
+---
 
-  
-  digitalWrite(carYellow, LOW);
-  digitalWrite(carRed, HIGH);
-  delay(2000);
+## ✨ Diferenciais do Projeto
 
-  
-  digitalWrite(pedRed, LOW);
-  digitalWrite(pedGreen, HIGH);
+Este projeto apresenta alguns recursos adicionais em relação a um semáforo simples:
 
-  
-  tone(Buzzer, 3000);
-  delay(300);
-  noTone(Buzzer);
-  delay(300);
-  tone(Buzzer, 3000);
-  delay(300);
-  noTone(Buzzer);
+* ✔ Solicitação de travessia por botão
+* ✔ **Indicador visual de tempo restante com barra de LEDs**
+* ✔ **Sinalização sonora para acessibilidade**
+* ✔ Integração completa entre semáforo de pedestres e veículos
+* ✔ Uso de **registradores de deslocamento (74HC595)** para expansão de saídas do microcontrolador
 
-  
-  for (int i = 10; i >= 0; i--) {
+Esses elementos tornam o sistema mais informativo e próximo de soluções utilizadas em sistemas reais de controle de tráfego.
 
-    uint16_t leds = (1 << i) - 1;
+---
 
-    enviarLeds(leds);
+## 🧩 Conceitos Aplicados
 
-    
-    if (i <= 3 && i > 0) {
-      tone(Buzzer, 3000);
-      delay(150);
-      noTone(Buzzer);
-      delay(850);
-    } else {
-      delay(1000);
-    }
-  }
-  digitalWrite(pedGreen, LOW);
+Durante o desenvolvimento foram aplicados conceitos importantes de:
 
-  
-  for(int i = 0; i < 4; i++) {
-    digitalWrite(pedRed, HIGH);
-    tone(Buzzer, 3000);
-    delay(400);
-    digitalWrite(pedRed, LOW);
-    noTone(Buzzer);
-    delay(400);
-  }
+* Eletrônica digital
+* Sistemas embarcados
+* Expansão de portas de I/O
+* Manipulação de bits
+* Integração entre hardware e software
 
-  digitalWrite(pedRed, HIGH);
+---
 
-  delay(1000);
+## 📷 Demonstração do Projeto
 
-  digitalWrite(carRed, LOW);
-  digitalWrite(carGreen, HIGH);
+<img width="1250" height="722" alt="image" src="https://github.com/user-attachments/assets/1046627b-0873-47e3-bd63-884f2e2d6067" />
 
-  changeTime = millis();
-}
+
+## 📁 Estrutura do Repositório
+
+```
+semaforo-pedestre/
+│
+├── codigo/
+│   └── semaforo.ino
+│
+│
+└── README.md
+```
+
+---
+
+## 👨‍💻 Autor
+
+Projeto desenvolvido por Arthur de Paula Rosendo, Artur Soares, Gabriel Kenji Iwasaki e Vitor Ferreira como atividade acadêmica na disciplina de Sistemas Embarcados.
